@@ -13,7 +13,9 @@ def window_transform_series(series,window_size):
     X = []
     y = []
 
+    # Only proceed, if there is enough data.
     if len(series) > window_size:
+        # Create the input/output subsequences.
         for i in range(len(series) - window_size):
             X.append(series[i:i+window_size])
             y.append(series[i + window_size])
@@ -25,6 +27,7 @@ def window_transform_series(series,window_size):
     y.shape = (len(y),1)
     
     return X,y
+
 
 # TODO: build an RNN to perform regression on our time series input/output data
 def build_part1_RNN(step_size, window_size):
@@ -50,6 +53,7 @@ def build_part1_RNN(step_size, window_size):
     # compile the model
     model.compile(loss='mean_squared_error', optimizer=optimizer)
 
+
 ### TODO: list all unique characters in the text and remove any non-english ones
 def clean_text(text):
     # find all unique characters in the text
@@ -57,9 +61,34 @@ def clean_text(text):
     print(len(chars), " characters: ", chars)
 
     # remove as many non-english characters and character sequences as you can 
-    text = text.replace('/',' ')
+    # They can have meaning in the text, but let's just use ASCII lower case characters and
+    # punctuation includes [' ', '!', ',', '.', ':', ';', '?']
+    # (space, eclamation mark, comma, period, colon, semicolon, question mark)
+    text = text.replace('"',' ')
+    text = text.replace('$',' ')
+    text = text.replace('%',' ')
+    text = text.replace('&',' ')
+    text = text.replace("'",' ')
+    text = text.replace('(',' ')
+    text = text.replace(')',' ')
     text = text.replace('*',' ')
+    text = text.replace('-',' ')
+    text = text.replace('/',' ')
+    text = text.replace('@',' ')
 
+    # Numbers.
+    text = text.replace('0',' ')
+    text = text.replace('1',' ')
+    text = text.replace('2',' ')
+    text = text.replace('3',' ')
+    text = text.replace('4',' ')
+    text = text.replace('5',' ')
+    text = text.replace('6',' ')
+    text = text.replace('7',' ')
+    text = text.replace('8',' ')
+    text = text.replace('9',' ')
+
+    # Convert special characters to English ones, if possible.
     text = text.replace('à','a')
     text = text.replace('â','a')
     text = text.replace('è','e')
@@ -74,8 +103,10 @@ def window_transform_text(text,window_size,step_size):
     # containers for input/output pairs
     inputs = []
     outputs = []
-    
+
+    # Only proceed, if there is enough data.
     if len(text) > window_size:
+        # Create input/output subsequences.
         for i in range(0, len(text) - window_size, step_size):
             inputs.append(text[i:i+window_size])
             outputs.append(text[i + window_size])
